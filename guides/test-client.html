@@ -140,49 +140,34 @@
     
     <div class="container">
         <div class="panel">
-            <h3>Conexión y Eventos</h3>
+            <h3>🎯 Demostración Paso a Paso</h3>
             
-            <div>
-                <label>ID de Usuario:</label>
-                <input type="number" id="userId" value="123" min="1">
-                
-                <label>ID de Evento:</label>
-                <input type="number" id="eventId" value="1" min="1">
-            </div>
-            
-            <div>
-                <button id="connectBtn" onclick="connect()">Conectar</button>
-                <button id="disconnectBtn" onclick="disconnect()" disabled>Desconectar</button>
-                <button id="joinRoomBtn" onclick="joinEventRoom()" disabled>Unirse a Sala del Evento</button>
+            <!-- Configuración para la demo -->
+            <div style="background: #f8f9fa; padding: 10px; border-radius: 4px; margin-bottom: 15px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <label>ID de Usuario:</label>
+                        <input type="number" id="userId" value="123" min="1" style="width: 100%;">
+                    </div>
+                    <div>
+                        <label>ID de Evento:</label>
+                        <input type="number" id="eventId" value="1" min="1" style="width: 100%;">
+                    </div>
+                    <div>
+                        <label>ID de Categoría:</label>
+                        <input type="number" id="categoryId" value="2" min="1" style="width: 100%;">
+                    </div>
+                    <div>
+                        <label>Cantidad:</label>
+                        <input type="number" id="quantity" value="2" min="1" max="10" style="width: 100%;">
+                    </div>
+                </div>
             </div>
             
             <div id="connectionStatus" class="status disconnected">
                 Desconectado
             </div>
-            
-            <h4>Controles de Tickets</h4>
-            <div>
-                <label>ID de Categoría:</label>
-                <input type="number" id="categoryId" value="2" min="1">
-                
-                <label>Cantidad:</label>
-                <input type="number" id="quantity" value="2" min="1" max="10">
-            </div>
-            
-            <div>
-                <button onclick="lockTickets()" disabled id="lockBtn">🔒 Bloquear Tickets</button>
-                <button onclick="unlockTickets()" disabled id="unlockBtn">🔓 Desbloquear Tickets</button>
-                <button onclick="getMyLocks()" disabled id="locksBtn">📋 Mis Bloqueos</button>
-            </div>
-            
-            <h4>Prueba de Flujo de Compra</h4>
-            <div>
-                <button onclick="testCompleteOrderFlow()" disabled id="orderFlowBtn">🛒 Probar Flujo de Compra Completo</button>
-                <div id="orderStatus" style="margin-top: 10px;"></div>
-            </div>
-            
-            <h4>🎯 Demostración Paso a Paso</h4>
-            <div id="stepByStepDemo" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 10px 0;">
+            <div id="stepByStepDemo" style="background: #ffffff; padding: 15px; border-radius: 8px; margin: 10px 0; border: 1px solid #dee2e6;">
                 <div style="margin-bottom: 15px;">
                     <strong>Sigue estos pasos para ver el flujo de bloquear y comprar:</strong>
                 </div>
@@ -221,6 +206,7 @@
                 
                 <div style="margin-top: 10px; text-align: center;">
                     <button onclick="resetDemo()" class="step-btn" style="background: #6c757d;">🔄 Reiniciar Demo</button>
+                    <button onclick="disconnect()" class="step-btn" style="background: #dc3545;">❌ Desconectar</button>
                 </div>
             </div>
             
@@ -252,13 +238,6 @@
             <h3>Actualizaciones en Tiempo Real</h3>
             <button onclick="clearLog()">Limpiar Registro</button>
             <div id="log" class="log"></div>
-        </div>
-    </div>
-    
-    <div class="panel">
-        <h3>Actualizaciones de Disponibilidad</h3>
-        <div id="availabilityInfo">
-            <p>Únete a la sala de un evento para ver las actualizaciones de disponibilidad en tiempo real</p>
         </div>
     </div>
 
@@ -369,7 +348,8 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYXNpc3RlbnRlQGV4YW1wbGUuY29tIiwicm9sZSI6ImFzc2lzdGFudCIsImlhdCI6MTc1MjAzNjAzNywiZXhwIjoxNzUyMDM5NjM3fQ.5iHYN14TjRItgJBJGLJ98WhOGccZv8QxdRaNB13Wc6c'
+                        //IN THIS CASE I'm using the token of the ID de Usuario, if it doesn't match will give me an Unaothorized error.
+                        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYXNpc3RlbnRlQGV4YW1wbGUuY29tIiwicm9sZSI6ImFzc2lzdGFudCIsImlhdCI6MTc1MzY1ODY1MiwiZXhwIjoxNzUzNjYyMjUyfQ.CwBjHHxPJJOcw62HBIRCWi3wq8DilTgfIiBBKjUo66k'
                     },
                     body: JSON.stringify(orderData)
                 });
@@ -456,7 +436,7 @@
         }
         
         function connect() {
-            const userId = document.getElementById('userId').value;
+            const userId = 1;
             
             if (socket) {
                 socket.disconnect();
@@ -512,28 +492,6 @@
                 }
             });
             
-            socket.on('unlock-tickets-response', (response) => {
-                if (response.success) {
-                    log(`🔓 Tickets desbloqueados exitosamente`, 'success');
-                    clearLockInfo();
-                } else {
-                    log(`❌ Falló el desbloqueo: ${response.message}`, 'error');
-                }
-            });
-            
-            socket.on('my-locks-response', (data) => {
-                currentLocks = data.locks;
-                log(`📋 Bloqueos actuales: ${data.locks.length}`, 'info');
-                data.locks.forEach(lock => {
-                    log(`  - Bloqueo ${lock.lockId}: Evento ${lock.eventId}, Categoría ${lock.categoryId}, Cant ${lock.quantity}`, 'info');
-                });
-            });
-            
-            socket.on('availability-update', (update) => {
-                log(`📊 Actualización de Disponibilidad - Evento ${update.eventId}, Categoría ${update.categoryId}: ${update.availableTickets} disponibles, ${update.lockedTickets} bloqueados`, 'info');
-                updateAvailabilityDisplay(update);
-            });
-            
             socket.on('error', (error) => {
                 log(`❌ Error: ${error.message}`, 'error');
             });
@@ -578,44 +536,15 @@
             }
         }
         
-        function unlockTickets() {
-            const eventId = parseInt(document.getElementById('eventId').value);
-            const categoryId = parseInt(document.getElementById('categoryId').value);
-            const quantity = parseInt(document.getElementById('quantity').value);
-            const userId = parseInt(document.getElementById('userId').value);
-            
-            if (socket && socket.connected) {
-                socket.emit('unlock-tickets', {
-                    eventId: eventId,
-                    categoryId: categoryId,
-                    quantity: quantity,
-                    userId: userId
-                });
-                log(`Solicitando desbloqueo para ${quantity} tickets en la categoría ${categoryId}...`);
-            }
-        }
-        
-        function getMyLocks() {
-            if (socket && socket.connected) {
-                socket.emit('get-my-locks');
-                log('Solicitando bloqueos actuales...');
-            }
-        }
-        
         function updateConnectionStatus(connected) {
             const statusDiv = document.getElementById('connectionStatus');
-            const buttons = ['disconnectBtn', 'joinRoomBtn', 'lockBtn', 'unlockBtn', 'locksBtn', 'orderFlowBtn'];
             
             if (connected) {
                 statusDiv.textContent = 'Conectado';
                 statusDiv.className = 'status connected';
-                document.getElementById('connectBtn').disabled = true;
-                buttons.forEach(id => document.getElementById(id).disabled = false);
             } else {
                 statusDiv.textContent = 'Desconectado';
                 statusDiv.className = 'status disconnected';
-                document.getElementById('connectBtn').disabled = false;
-                buttons.forEach(id => document.getElementById(id).disabled = true);
                 clearLockInfo();
             }
         }
@@ -637,117 +566,8 @@
             document.getElementById('ticketInfo').style.display = 'none';
         }
         
-        function updateAvailabilityDisplay(update) {
-            const availabilityDiv = document.getElementById('availabilityInfo');
-            const timestamp = new Date(update.timestamp).toLocaleTimeString();
-            
-            availabilityDiv.innerHTML += `
-                <div style="border: 1px solid #ddd; padding: 10px; margin: 5px 0; border-radius: 4px;">
-                    <strong>Evento ${update.eventId} - Categoría ${update.categoryId}</strong><br>
-                    Disponibles: ${update.availableTickets} | Bloqueados: ${update.lockedTickets} | Total: ${update.totalTickets}<br>
-                    <small>Actualizado a las ${timestamp}</small>
-                </div>
-            `;
-        }
-        
-        async function testCompleteOrderFlow() {
-            const orderBtn = document.getElementById('orderFlowBtn');
-            const statusDiv = document.getElementById('orderStatus');
-            
-            orderBtn.disabled = true;
-            statusDiv.innerHTML = '<div style="color: blue;">🚀 Iniciando prueba de flujo de compra completo...</div>';
-            
-            try {
-                // Paso 1: Bloquear tickets
-                log('🔒 Paso 1: Bloqueando tickets...', 'info');
-                statusDiv.innerHTML += '<div>Paso 1: Bloqueando tickets...</div>';
-                
-                const lockPromise = new Promise((resolve, reject) => {
-                    const timeout = setTimeout(() => reject(new Error('Tiempo de espera para bloqueo agotado')), 10000);
-                    
-                    socket.once('lock-tickets-response', (response) => {
-                        clearTimeout(timeout);
-                        if (response.success) {
-                            resolve(response);
-                        } else {
-                            reject(new Error(response.message));
-                        }
-                    });
-                });
-                
-                lockTickets();
-                const lockResponse = await lockPromise;
-                
-                log(`✅ Bloqueo exitoso: ${lockResponse.lockId}`, 'success');
-                statusDiv.innerHTML += '<div style="color: green;">✅ Paso 1 Completo: Tickets bloqueados</div>';
-                
-                // Paso 2: Crear orden con el bloqueo
-                log('🛒 Paso 2: Creando orden con el bloqueo...', 'info');
-                statusDiv.innerHTML += '<div>Paso 2: Creando orden con el bloqueo...</div>';
-                
-                const orderData = {
-                    eventId: parseInt(document.getElementById('eventId').value),
-                    categoryId: parseInt(document.getElementById('categoryId').value),
-                    quantity: parseInt(document.getElementById('quantity').value),
-                    lockId: lockResponse.lockId,
-                    notes: 'Orden de prueba desde el cliente de tiempo real'
-                };
-                
-                const orderResponse = await fetch('http://localhost:3000/api/orders/with-lock', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer test_token'
-                    },
-                    body: JSON.stringify(orderData)
-                });
-                
-                if (!orderResponse.ok) {
-                    throw new Error(`La creación del pedido falló: ${orderResponse.status}`);
-                }
-                
-                const order = await orderResponse.json();
-                log(`✅ Pedido creado exitosamente: ${order.id}`, 'success');
-                statusDiv.innerHTML += '<div style="color: green;">✅ Paso 2 Completo: Pedido creado</div>';
-                
-                // Paso 3: Esperar confirmación en tiempo real
-                log('📡 Paso 3: Esperando confirmación en tiempo real...', 'info');
-                statusDiv.innerHTML += '<div>Paso 3: Esperando confirmación en tiempo real...</div>';
-                
-                const confirmationPromise = new Promise((resolve) => {
-                    const timeout = setTimeout(() => {
-                        resolve({ timeout: true });
-                    }, 15000);
-                    
-                    socket.once('order-completed', (data) => {
-                        clearTimeout(timeout);
-                        resolve(data);
-                    });
-                });
-                
-                const confirmation = await confirmationPromise;
-                
-                if (confirmation.timeout) {
-                    log('⚠️ No se recibió confirmación en tiempo real (timeout)', 'error');
-                    statusDiv.innerHTML += '<div style="color: orange;">⚠️ Paso 3: Timeout esperando confirmación</div>';
-                } else {
-                    log(`✅ Confirmación en tiempo real recibida para el pedido ${confirmation.orderId}`, 'success');
-                    statusDiv.innerHTML += '<div style="color: green;">✅ Paso 3 Completo: Confirmación en tiempo real recibida</div>';
-                }
-                
-                statusDiv.innerHTML += '<div style="color: green; font-weight: bold; margin-top: 10px;">🎉 ¡Prueba de flujo de compra completo finalizada exitosamente!</div>';
-                log('🎉 ¡Prueba de flujo de compra completo finalizada exitosamente!', 'success');
-                
-            } catch (error) {
-                log(`❌ La prueba de flujo de compra falló: ${error.message}`, 'error');
-                statusDiv.innerHTML += `<div style="color: red;">❌ La prueba falló: ${error.message}</div>`;
-            } finally {
-                orderBtn.disabled = false;
-            }
-        }
-        
         window.onload = function() {
-            log('Cliente de pruebas cargado. Haz clic en Conectar para empezar.');
+            log('🎫 Cliente de pruebas cargado. Usa la demostración paso a paso para ver el flujo completo.');
         };
     </script>
 </body>

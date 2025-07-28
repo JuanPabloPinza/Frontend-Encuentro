@@ -21,14 +21,14 @@ export const useWebSocket = () => {
     clearAvailabilityUpdates
   } = useWebSocketStore();
 
-  // Auto-connect when user is authenticated (with error handling)
-  useEffect(() => {
-    if (isAuthenticated && user && !isConnected && !isConnecting) {
-      connect(user.id, token || undefined).catch((err) => {
-        console.warn('WebSocket connection failed, continuing without real-time features:', err);
-      });
-    }
-  }, [isAuthenticated, user, token, isConnected, isConnecting, connect]);
+  // Auto-connect when user is authenticated (with error handling) - DISABLED for manual testing
+  // useEffect(() => {
+  //   if (isAuthenticated && user && !isConnected && !isConnecting) {
+  //     connect(user.id, token || undefined).catch((err) => {
+  //       console.warn('WebSocket connection failed, continuing without real-time features:', err);
+  //     });
+  //   }
+  // }, [isAuthenticated, user, token, isConnected, isConnecting, connect]);
 
   // Cleanup on logout
   useEffect(() => {
