@@ -36,7 +36,7 @@ class ApiService {
   private api: AxiosInstance;
   private baseURL: string;
 
-  constructor(baseURL: string = 'http://localhost:3000/api') {
+  constructor(baseURL: string = process.env.NEXT_PUBLIC_API_URL || 'http://3.144.72.132:3000/api') {
     this.baseURL = baseURL;
     this.api = axios.create({
       baseURL,

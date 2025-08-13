@@ -18,7 +18,7 @@ export class WebSocketService {
   private isConnecting: boolean = false;
   private eventListeners: Map<string, Set<Function>> = new Map();
 
-  constructor(baseURL: string = 'ws://localhost:8880/realtime') {
+  constructor(baseURL: string = process.env.NEXT_PUBLIC_WS_URL || 'ws://3.144.72.132:8880/realtime') {
     this.baseURL = baseURL;
   }
 

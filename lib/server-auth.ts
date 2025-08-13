@@ -32,7 +32,7 @@ export const serverAuthUtils = {
   // Validate token with your backend
   validateToken: async (token: string): Promise<{ valid: boolean; user?: any }> => {
     try {
-      const response = await fetch('http://localhost:3000/api/user', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://3.144.72.132:3000/api'}/user`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
