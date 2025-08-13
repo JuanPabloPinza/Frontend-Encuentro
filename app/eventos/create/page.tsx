@@ -4,20 +4,48 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/hooks/use-auth';
 import { EventForm } from '@/components/events/event-form';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Loader2  } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useMounted } from '@/lib/hooks/use-mounted';
+
+
 
 export default function CreateEventPage() {
+  console.log('🚀 CreateEventPage component loaded!');
+  
   const router = useRouter();
-  const { isAuthenticated, isOrganizer } = useAuth();
+  const mounted = useMounted();
+  const { isAuthenticated, isOrganizer, isLoading, user } = useAuth();
+
+  // Debug logs
+  console.log('CreateEventPage render:', { mounted, isAuthenticated, isOrganizer, isLoading, user: !!user });
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/user/login');
-    } else if (!isOrganizer) {
-      router.push('/eventos');
+    console.log('CreateEventPage useEffect:', { mounted, isAuthenticated, isOrganizer, isLoading, user: !!user });
+    // Solo tomamos decisiones cuando la carga de autenticación ha terminado y el usuario ya está definido
+    if (mounted && !isLoading) {
+      if (!isAuthenticated) {
+        console.log('Redirecting to login: not authenticated');
+        router.push('/user/login?callbackUrl=/eventos/create');
+      } else if (!user) {
+        console.log('Waiting for user to load...');
+        // Si el usuario aún no está cargado, esperamos
+        return;
+      } else if (user && !isOrganizer) {
+        console.log('Redirecting to eventos: user is not organizer');
+        router.push('/eventos');
+      }
     }
-  }, [isAuthenticated, isOrganizer, router]);
+  }, [isAuthenticated, isOrganizer, isLoading, mounted, router, user]);
+
+
+  if (!mounted || isLoading) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   if (!isAuthenticated || !isOrganizer) {
     return (

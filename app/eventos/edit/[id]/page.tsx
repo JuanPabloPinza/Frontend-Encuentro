@@ -122,7 +122,7 @@ export default function EditEventPage() {
         
         <h1 className="text-3xl font-bold mb-2">Edit Event</h1>
         <p className="text-gray-600">
-          Update the details for "{currentEvent.eventName}"
+          Update the details for &quot;{currentEvent.eventName}&quot;
         </p>
       </div>
 

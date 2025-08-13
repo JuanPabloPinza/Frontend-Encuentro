@@ -4,9 +4,9 @@ import { serverAuthUtils } from './lib/server-auth'
 
 // Define which routes require authentication
 const protectedRoutes = [
-  '/profile',
-  '/eventos/create',
-  '/eventos/edit',
+  //'/profile',
+  // '/eventos/create', // Temporarily disabled - using client-side protection
+  //'/eventos/edit',
   '/api/protected',
 ]
 

@@ -28,9 +28,7 @@ export default function ProfilePage() {
   const { 
     orders, 
     fetchMyOrders, 
-    getTotalSpent, 
-    getTotalTickets,
-    getCompletedOrders 
+    getOrderStats
   } = useOrders();
   const { isConnected } = useWebSocket();
 
@@ -56,9 +54,9 @@ export default function ProfilePage() {
     );
   }
 
-  const totalSpent = getTotalSpent();
-  const totalTickets = getTotalTickets();
-  const completedOrders = getCompletedOrders();
+  const stats = getOrderStats();
+  const totalSpent = stats.totalSpent;
+  const totalTickets = stats.totalTickets;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -232,7 +230,7 @@ export default function ProfilePage() {
                   <ShoppingCart className="h-12 w-12 mx-auto text-gray-400 mb-4" />
                   <h3 className="text-lg font-medium text-gray-900 mb-2">No orders yet</h3>
                   <p className="text-gray-600 mb-4">
-                    You haven't placed any orders yet.
+                    You haven&#39;t placed any orders yet.
                   </p>
                   <Button onClick={() => router.push('/eventos')}>
                     Browse Events

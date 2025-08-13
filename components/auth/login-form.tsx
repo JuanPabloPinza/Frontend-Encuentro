@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -24,6 +24,8 @@ export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const { login, isLoading, error, clearError } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl');
 
   const {
     register,
@@ -35,14 +37,16 @@ export function LoginForm() {
 
   const onSubmit = async (data: LoginFormData) => {
     clearError();
-    
     try {
       const result = await login(data);
-      
       if (result.success) {
-        // Small delay to ensure state is updated
         setTimeout(() => {
-          router.push('/eventos');
+          // Evita loop: no redirigir a /user/login
+          if (callbackUrl && callbackUrl !== '/user/login') {
+            router.push(callbackUrl);
+          } else {
+            router.push('/eventos');
+          }
         }, 100);
       }
     } catch (error) {
@@ -136,7 +140,7 @@ export function LoginForm() {
           </Button>
 
           <div className="text-center text-sm">
-            <span className="text-gray-500">Don't have an account? </span>
+            <span className="text-gray-500">Don&#39;t have an account? </span>
             <Button
               type="button"
               variant="link"
@@ -152,3 +156,5 @@ export function LoginForm() {
     </Card>
   );
 }
+
+

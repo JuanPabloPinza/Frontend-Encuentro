@@ -102,8 +102,12 @@ export function EventForm({ event }: EventFormProps) {
       } else {
         toast.error(result.error || 'Failed to save event');
       }
-    } catch (error: any) {
-      toast.error(error.message || 'An unexpected error occurred');
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message || 'An unexpected error occurred');
+      } else {
+        toast.error('An unexpected error occurred');
+      }
     } finally {
       setIsSubmitting(false);
     }

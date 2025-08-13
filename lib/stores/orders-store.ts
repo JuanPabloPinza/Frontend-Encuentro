@@ -32,13 +32,41 @@ export const useOrdersStore = create<OrdersState>((set, get) => ({
     set({ isLoading: true, error: null });
     
     try {
-      const orders = await apiService.getMyOrders();
+      const rawOrders = await apiService.getMyOrders();
+      
+      // Transform orders to ensure numeric values
+      const orders = rawOrders.map(order => ({
+        ...order,
+        totalPrice: typeof order.totalPrice === 'string' 
+          ? parseFloat(order.totalPrice) 
+          : order.totalPrice,
+        unitPrice: typeof order.unitPrice === 'string' 
+          ? parseFloat(order.unitPrice) 
+          : order.unitPrice,
+        quantity: typeof order.quantity === 'string' 
+          ? parseInt(order.quantity) 
+          : order.quantity,
+        eventId: typeof order.eventId === 'string' 
+          ? parseInt(order.eventId) 
+          : order.eventId,
+        categoryId: typeof order.categoryId === 'string' 
+          ? parseInt(order.categoryId) 
+          : order.categoryId,
+        userId: typeof order.userId === 'string' 
+          ? parseInt(order.userId) 
+          : order.userId,
+        id: typeof order.id === 'string' 
+          ? parseInt(order.id) 
+          : order.id
+      }));
+      
       set({
         orders,
         isLoading: false,
         error: null
       });
     } catch (error: any) {
+      console.error('Error fetching orders:', error);
       set({
         orders: [],
         isLoading: false,
@@ -51,7 +79,34 @@ export const useOrdersStore = create<OrdersState>((set, get) => ({
     set({ isLoading: true, error: null });
     
     try {
-      const orders = await apiService.getAllOrders();
+      const rawOrders = await apiService.getAllOrders();
+      
+      // Transform orders to ensure numeric values
+      const orders = rawOrders.map(order => ({
+        ...order,
+        totalPrice: typeof order.totalPrice === 'string' 
+          ? parseFloat(order.totalPrice) 
+          : order.totalPrice,
+        unitPrice: typeof order.unitPrice === 'string' 
+          ? parseFloat(order.unitPrice) 
+          : order.unitPrice,
+        quantity: typeof order.quantity === 'string' 
+          ? parseInt(order.quantity) 
+          : order.quantity,
+        eventId: typeof order.eventId === 'string' 
+          ? parseInt(order.eventId) 
+          : order.eventId,
+        categoryId: typeof order.categoryId === 'string' 
+          ? parseInt(order.categoryId) 
+          : order.categoryId,
+        userId: typeof order.userId === 'string' 
+          ? parseInt(order.userId) 
+          : order.userId,
+        id: typeof order.id === 'string' 
+          ? parseInt(order.id) 
+          : order.id
+      }));
+      
       set({
         orders,
         isLoading: false,

@@ -25,11 +25,19 @@ export function formatDateTime(date: Date | string): string {
   });
 }
 
-export function formatCurrency(amount: number): string {
+export function formatCurrency(amount: number | string | undefined | null): string {
+  // Convert to number and handle invalid values
+  const numAmount = typeof amount === 'number' ? amount : parseFloat(amount?.toString() || '0');
+  
+  // Return $0.00 for invalid numbers
+  if (isNaN(numAmount) || !isFinite(numAmount)) {
+    return '$0.00';
+  }
+  
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
-  }).format(amount);
+  }).format(numAmount);
 }
 
 export function truncateText(text: string, maxLength: number): string {

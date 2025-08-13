@@ -48,15 +48,11 @@ export class WebSocketService {
       try {
         this.socket = io(this.baseURL, {
           auth: {
-            token: 'fake_jwt_token_for_testing'
+            token: user.token || 'fake_jwt_token_for_testing'
           },
           query: {
-            userId: '1' // Use hardcoded userId like the working HTML client
-          },
-          timeout: 5000,
-          retries: 1,
-          forceNew: true,
-          transports: ['websocket', 'polling']
+            userId: user.userId.toString()
+          }
         });
 
         this.socket.on('connect', () => {
@@ -85,6 +81,12 @@ export class WebSocketService {
         // Add a catch-all listener for debugging
         this.socket.onAny((event, ...args) => {
           console.log('📡 WebSocket event received:', event, args);
+          if (event === 'lock-tickets-response') {
+            console.log('🚨 RECEIVED LOCK-TICKETS-RESPONSE:', args);
+          }
+          if (event === 'pong') {
+            console.log('🏓 RECEIVED PONG RESPONSE:', args);
+          }
         });
 
       } catch (error) {
@@ -177,23 +179,43 @@ export class WebSocketService {
       }
 
       console.log('🔒 Sending lock-tickets request:', request);
+      console.log('🔒 Socket state:', {
+        connected: this.socket.connected,
+        id: this.socket.id,
+        transport: this.socket.io.engine?.transport?.name
+      });
 
       const timeout = setTimeout(() => {
         console.error('❌ Lock tickets request timeout');
-        this.off('lock-tickets-response', handleResponse);
+        this.socket?.off('lock-tickets-response', handleResponse);
         reject(new Error('Lock tickets request timeout'));
       }, 10000);
 
       const handleResponse = (response: LockTicketsResponse) => {
         console.log('✅ Received lock-tickets-response in handler:', response);
         clearTimeout(timeout);
-        this.off('lock-tickets-response', handleResponse);
+        this.socket?.off('lock-tickets-response', handleResponse);
         resolve(response);
       };
 
-      // Use the global event listener system
-      this.on('lock-tickets-response', handleResponse);
+      // Use direct socket listener like the HTML client
+      this.socket.on('lock-tickets-response', handleResponse);
+      
+      console.log('🚀 About to emit lock-tickets event...');
+      console.log('🚀 Socket details:', {
+        connected: this.socket.connected,
+        id: this.socket.id,
+        transport: this.socket.io.engine?.transport?.name
+      });
+      console.log('🚀 Request details:', JSON.stringify(request, null, 2));
+      
       this.socket.emit('lock-tickets', request);
+      console.log('🚀 lock-tickets event emitted!');
+      
+      // Add a test emission to see if ANY events reach the server
+      console.log('🧪 Testing ping event...');
+      this.socket.emit('ping', { test: 'data', timestamp: Date.now() });
+      console.log('🧪 ping event emitted!');
     });
   }
 

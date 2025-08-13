@@ -69,6 +69,13 @@ export interface UpdateEventRequest {
   eventDate?: string;
   location?: string;
   isActive?: boolean;
+  ticketCategories?: {
+    categoryName?: string;
+    price?: number;
+    totalSeats?: number;
+    description?: string;
+    isActive?: boolean;
+  }[];
 }
 
 // Order Types

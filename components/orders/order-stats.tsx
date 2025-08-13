@@ -18,6 +18,7 @@ interface OrderStatsProps {
   pendingOrders: number;
   completedOrders: number;
   cancelledOrders: number;
+  confirmedOrders?: number; // Optional for backward compatibility
 }
 
 export function OrderStats({
@@ -26,7 +27,8 @@ export function OrderStats({
   totalTickets,
   pendingOrders,
   completedOrders,
-  cancelledOrders
+  cancelledOrders,
+  confirmedOrders = 0
 }: OrderStatsProps) {
   const stats = [
     {
@@ -58,6 +60,13 @@ export function OrderStats({
       bgColor: 'bg-yellow-100'
     },
     {
+      title: 'Confirmed',
+      value: confirmedOrders.toString(),
+      icon: CheckCircle,
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-100'
+    },
+    {
       title: 'Completed',
       value: completedOrders.toString(),
       icon: CheckCircle,
@@ -74,7 +83,7 @@ export function OrderStats({
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4 mb-8">
       {stats.map((stat, index) => {
         const Icon = stat.icon;
         return (

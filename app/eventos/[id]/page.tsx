@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -39,6 +39,7 @@ export default function EventDetailPage() {
   } = useWebSocket();
 
   const [isJoiningRoom, setIsJoiningRoom] = useState(false);
+  const isJoiningRoomRef = useRef(false);
 
   // Fetch event details
   useEffect(() => {
@@ -50,7 +51,8 @@ export default function EventDetailPage() {
 
   // Auto-connect to WebSocket and join event room
   useEffect(() => {
-    if (isAuthenticated && eventId && isConnected && !isInEventRoom(eventId) && !isJoiningRoom) {
+    if (isAuthenticated && eventId && isConnected && !isInEventRoom(eventId) && !isJoiningRoomRef.current) {
+      isJoiningRoomRef.current = true;
       setIsJoiningRoom(true);
       try {
         joinRoom(eventId);
@@ -60,9 +62,10 @@ export default function EventDetailPage() {
         toast.error('Failed to connect to real-time updates');
       } finally {
         setIsJoiningRoom(false);
+        isJoiningRoomRef.current = false;
       }
     }
-  }, [isAuthenticated, eventId, isConnected, isInEventRoom, joinRoom, isJoiningRoom]);
+  }, [isAuthenticated, eventId, isConnected, isInEventRoom, joinRoom]);
 
   // Connect to WebSocket if not connected
   useEffect(() => {

@@ -41,6 +41,16 @@ export const useWebSocketStore = create<WebSocketState>((set, get) => ({
     try {
       await webSocketService.connect({ userId, token });
 
+      // Clear any existing listeners before setting up new ones
+      webSocketService.off('connected');
+      webSocketService.off('disconnect');
+      webSocketService.off('joined-event-room');
+      webSocketService.off('availability-update');
+      webSocketService.off('my-locks-response');
+      webSocketService.off('order-completed');
+      webSocketService.off('order-cancelled');
+      webSocketService.off('error');
+
       // Set up event listeners
       webSocketService.on('connected', (data: any) => {
         console.log('WebSocket connection confirmed:', data);
@@ -115,8 +125,8 @@ export const useWebSocketStore = create<WebSocketState>((set, get) => ({
 
   joinEventRoom: (eventId: number, userId: number) => {
     try {
-      // Use hardcoded userId like the working HTML client
-      webSocketService.joinEventRoom({ eventId, userId: 1 });
+      // Use the actual userId passed from the component
+      webSocketService.joinEventRoom({ eventId, userId });
     } catch (error: any) {
       set({ error: error.message || 'Failed to join event room' });
     }
@@ -124,12 +134,16 @@ export const useWebSocketStore = create<WebSocketState>((set, get) => ({
 
   lockTickets: async (eventId: number, categoryId: number, quantity: number, userId: number) => {
     try {
+      console.log(`🔒 [Store] Attempting to lock tickets:`, { eventId, categoryId, quantity, userId });
+      
       const response = await webSocketService.lockTickets({
         eventId,
         categoryId,
         quantity,
-        userId: 1 // Use hardcoded userId like the working HTML client
+        userId // Use the actual userId passed from the component
       });
+
+      console.log(`🔒 [Store] Lock tickets response:`, response);
 
       if (response.success) {
         return {
@@ -144,6 +158,7 @@ export const useWebSocketStore = create<WebSocketState>((set, get) => ({
         return { success: false, error: errorMessage };
       }
     } catch (error: any) {
+      console.error(`❌ [Store] Lock tickets error:`, error);
       const errorMessage = error.message || 'Failed to lock tickets';
       set({ error: errorMessage });
       return { success: false, error: errorMessage };
@@ -156,7 +171,7 @@ export const useWebSocketStore = create<WebSocketState>((set, get) => ({
         eventId,
         categoryId,
         quantity,
-        userId: 1 // Use hardcoded userId like the working HTML client
+        userId // Use the actual userId passed from the component
       });
 
       if (response.success) {

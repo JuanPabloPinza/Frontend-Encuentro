@@ -24,11 +24,7 @@ export default function OrdersPage() {
     fetchAllOrders,
     clearError,
     getOrdersByStatus,
-    getPendingOrders,
-    getCompletedOrders,
-    getCancelledOrders,
-    getTotalSpent,
-    getTotalTickets
+    getOrderStats
   } = useOrders();
 
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
@@ -131,16 +127,20 @@ export default function OrdersPage() {
       )}
 
       {/* Statistics */}
-      {!showAllOrders && !isLoading && orders.length > 0 && (
-        <OrderStats
-          totalOrders={orders.length}
-          totalSpent={getTotalSpent()}
-          totalTickets={getTotalTickets()}
-          pendingOrders={getPendingOrders().length}
-          completedOrders={getCompletedOrders().length}
-          cancelledOrders={getCancelledOrders().length}
-        />
-      )}
+      {!showAllOrders && !isLoading && orders.length > 0 && (() => {
+        const stats = getOrderStats();
+        return (
+          <OrderStats
+            totalOrders={stats.total}
+            totalSpent={stats.totalSpent}
+            totalTickets={stats.totalTickets}
+            pendingOrders={stats.pending}
+            confirmedOrders={stats.confirmed}
+            completedOrders={stats.completed}
+            cancelledOrders={stats.cancelled}
+          />
+        );
+      })()}
 
       {/* Filters */}
       <Card className="mb-6">

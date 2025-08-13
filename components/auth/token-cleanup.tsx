@@ -19,12 +19,20 @@ export function TokenCleanup() {
     const authStore = localStorage.getItem('auth-store');
     let hasValidAuthStore = false;
     
+    console.log('TokenCleanup: authStore raw:', authStore);
+    
     try {
       if (authStore) {
         const parsed = JSON.parse(authStore);
+        console.log('TokenCleanup: parsed authStore:', parsed);
         hasValidAuthStore = !!(parsed.state?.token && parsed.state?.user);
+        console.log('TokenCleanup: hasValidAuthStore:', hasValidAuthStore, { 
+          token: !!parsed.state?.token, 
+          user: !!parsed.state?.user 
+        });
       }
-    } catch {
+    } catch (error) {
+      console.log('TokenCleanup: Parse error:', error);
       // Invalid auth-store, remove it
       localStorage.removeItem('auth-store');
     }
