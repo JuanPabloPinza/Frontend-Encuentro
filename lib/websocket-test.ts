@@ -8,7 +8,7 @@ export class WebSocketTest {
     console.log('🧪 [WEBSOCKET TEST] Connecting using HTML client configuration...');
     
     // Use EXACT same configuration as working HTML client
-    this.socket = io('ws://localhost:8880/realtime', {
+    this.socket = io('http://3.144.72.132:8880/realtime', {
       auth: {
         token: 'fake_jwt_token_for_testing'
       },
